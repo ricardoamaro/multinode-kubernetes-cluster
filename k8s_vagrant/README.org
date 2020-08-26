@@ -1,0 +1,37 @@
+* Multi node Kubernetes Cluster
+
+This a multi node cluster playground which offers a production-like environment using Vagrant and Ansible for provisioning the cluster on multiple providers such as Docker, VirtualBox, KVM/libvirt, Docker, and so on.
+By using Ansible as the infrastructure automation engine we can have playbooks written in yaml that offer inventory management the infrastructure-as-code way.
+
+* Requirements
+
+- Vagrant: https://www.vagrantup.com/downloads.html
+- Ansible: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+- VirtualBox, KVM/libvirt or Docker as the provider.
+
+* Quick reference
+
+After pulling this repository run `vagrant up` on the base folder.
+When the cluster is up and running you can ssh and
+can use `kubectl` on the master:
+
+#+BEGIN_SRC
+ $ vagrant ssh k8s-master
+ $ kubectl get nodes
+ NAME         STATUS     ROLES    AGE     VERSION
+ k8s-master   Ready      master   4m28s   v1.19.0
+ node-1       Ready      <none>   2m12s   v1.19.0
+ node-2       NotReady   <none>   1s      v1.19.0
+#+END_SRC
+
+
+Or if you have `kubectl` installed locally, try:
+
+#+BEGIN_SRC
+ $ kubectl --kubeconfig=.kube/config get nodes
+ NAME         STATUS     ROLES    AGE     VERSION
+ k8s-master   Ready      master   4m28s   v1.19.0
+ node-1       Ready      <none>   2m12s   v1.19.0
+ node-2       NotReady   <none>   1s      v1.19.0
+#+END_SRC
+
