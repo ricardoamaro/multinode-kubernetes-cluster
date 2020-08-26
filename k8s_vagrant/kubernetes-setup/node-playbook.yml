@@ -22,26 +22,32 @@
 
   - name: Add apt repository for stable version
     apt_repository:
-      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
       state: present
 
   - name: Install docker and its dependecies
     apt: 
       name: "{{ packages }}"
-      state: present
+      state: latest
       update_cache: yes
     vars:
       packages:
       - docker-ce 
-      - docker-ce-cli 
-      - containerd.io
+      #- docker-ce-cli 
+      #- containerd.io
     notify:
       - docker status
-
+      
   - name: Add vagrant user to docker group
     user:
       name: vagrant
       group: docker
+
+  - name: enable docker service
+    systemd:
+      name: docker.service
+      state: started
+      enabled: yes
 
   - name: Remove swapfile from /etc/fstab
     mount:
@@ -82,6 +88,7 @@
     lineinfile:
       path: /etc/default/kubelet
       line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
+      create: yes
 
   - name: Restart kubelet
     service:
@@ -95,4 +102,8 @@
   - name: Join the node to cluster
     command: sh /tmp/join-command.sh
 
-
+  handlers:
+  - name: docker status
+    service:
+      name: docker
+      state: started

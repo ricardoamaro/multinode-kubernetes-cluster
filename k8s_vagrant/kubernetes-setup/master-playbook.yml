@@ -22,26 +22,32 @@
 
   - name: Add apt repository for stable version
     apt_repository:
-      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
       state: present
 
   - name: Install docker and its dependecies
     apt: 
       name: "{{ packages }}"
-      state: present
+      state: latest
       update_cache: yes
     vars:
       packages:
       - docker-ce 
-      - docker-ce-cli 
-      - containerd.io
+      #- docker-ce-cli 
+      #- containerd.io
     notify:
       - docker status
-
+      
   - name: Add vagrant user to docker group
     user:
       name: vagrant
       group: docker
+
+  - name: enable docker service
+    systemd:
+      name: docker.service
+      state: started
+      enabled: yes
 
   - name: Remove swapfile from /etc/fstab
     mount:
@@ -82,6 +88,7 @@
     lineinfile:
       path: /etc/default/kubelet
       line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
+      create: yes
 
   - name: Restart kubelet
     service:
@@ -90,7 +97,7 @@
       state: restarted
 
   - name: Initialize the Kubernetes cluster using kubeadm
-    command: kubeadm init --apiserver-advertise-address="192.168.50.10" --apiserver-cert-extra-sans="192.168.50.10"  --node-name k8s-master --pod-network-cidr=192.168.0.0/16
+    command: kubeadm init --apiserver-advertise-address="{{ node_ip }}" --apiserver-cert-extra-sans="{{ node_ip }}"  --node-name k8s-master --pod-network-cidr=192.168.0.0/16
 
   - name: Setup kubeconfig for vagrant user
     command: "{{ item }}"
@@ -98,22 +105,27 @@
      - mkdir -p /home/vagrant/.kube
      - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
      - chown vagrant:vagrant /home/vagrant/.kube/config
+     - rsync --delete -ar /home/vagrant/.kube/ /vagrant/.kube/
 
-  - name: Install calico pod network
+  # - name: Install calico pod network
+  #   become: false
+  #   command: kubectl create -f https://docs.projectcalico.org/v3.4/getting-started/kubernetes/installation/hosted/calico.yaml
+
+  - name: Install flannel pod network
     become: false
-    command: kubectl create -f https://docs.projectcalico.org/v3.4/getting-started/kubernetes/installation/hosted/calico.yaml
+    command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
   - name: Generate join command
     command: kubeadm token create --print-join-command
     register: join_command
 
   - name: Copy join command to local file
+    become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
-
+  
   handlers:
-    - name: docker status
-      service: name=docker state=started
+  - name: docker status
+    service:
+      name: docker
+      state: started
 
-
-
-    
