@@ -2,22 +2,25 @@
 # Can be controled from the repo folder:
 # kubectl --kubeconfig=.kube/config get nodes
 
-IMAGE_NAME = "bento/ubuntu-20.04"
+VMACHINE_IMAGE = "bento/ubuntu-20.04"
+DOCKER_IMAGE = "ubuntu:20.04"
 N = 2
 
 provider = "virtualbox"
 #provider = "libvirtd"
+#provider = "docker"
 
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
   config.vm.provider "#{provider}" do |v|
+    #v.image = DOCKER_IMAGE
     v.memory = 1024
     v.cpus = 2
   end
   
   config.vm.define "k8s-master" do |master|
-    master.vm.box = IMAGE_NAME
+    master.vm.box = VMACHINE_IMAGE
     master.vm.network "private_network", ip: "192.168.50.10"
     master.vm.hostname = "k8s-master"
     master.vm.provision "ansible" do |ansible|
@@ -33,7 +36,7 @@ Vagrant.configure("2") do |config|
 
   (1..N).each do |i|
     config.vm.define "node-#{i}" do |node|
-      node.vm.box = IMAGE_NAME
+      node.vm.box = VMACHINE_IMAGE
       node.vm.network "private_network", ip: "192.168.50.#{i + 10}"
       node.vm.hostname = "node-#{i}"
       node.vm.provision "ansible" do |ansible|
