@@ -7,7 +7,7 @@ DOCKER_IMAGE = "ubuntu:20.04"
 N = 2
 
 provider = "virtualbox"
-#provider = "libvirtd"
+#provider = "libvirt"
 #provider = "docker"
 
 Vagrant.configure("2") do |config|

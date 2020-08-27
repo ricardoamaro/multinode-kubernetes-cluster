@@ -37,3 +37,30 @@ Or if you have `kubectl` installed locally, try:
  node-2       NotReady   <none>   1s      v1.19.0
 #+END_SRC
 
+* Notes
+** Installing libvirt plugin and running
+
+*** On Ubuntu
+
+#+BEGIN_SRC
+sudo apt-get install -y libvirt-dev make gcc ruby-dev qemu-kvm libvirt0 virt-manager libguestfs-tools
+
+vagrant plugin install vagrant-libvirt
+#+END_SRC
+
+
+*** On Centos/Redhat/FEdora
+
+#+BEGIN_SRC
+yum install -y libvirt libvirt-devel make gcc rpm-build ruby-devel zlib-devel qemu-kvm
+
+# use the rpm from hashicorp
+yum install -y https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.rpm
+
+vagrant plugin install vagrant-libvirt
+#+END_SRC
+
+
+*** Running 
+Temporary uncomment the Vagrantfile `#provider = "libvirt"` line.
+Run `vagrant up` as normal.
