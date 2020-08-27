@@ -1,13 +1,15 @@
 * Multi node Kubernetes Cluster
 
-This a multi node cluster playground which offers a production-like environment using Vagrant and Ansible for provisioning the cluster on multiple providers such as Docker, VirtualBox, KVM/libvirt, Docker, and so on.
+This a multi node cluster playground which offers a production-like environment using Vagrant and Ansible for provisioning the cluster on multiple providers such as VirtualBox, Docker, KVM/libvirt and so on.
 By using Ansible as the infrastructure automation engine we can have playbooks written in yaml that offer inventory management the infrastructure-as-code way.
 
 * Requirements
 
 - Vagrant: https://www.vagrantup.com/downloads.html
 - Ansible: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
-- VirtualBox, KVM/libvirt or Docker as the provider.
+- VirtualBox as the provider. https://www.virtualbox.org/wiki/Downloads
+
+Note that Docker and KVM/libvirt will be supported in the future.  
 
 * Quick reference
 
