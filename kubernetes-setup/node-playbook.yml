@@ -100,15 +100,15 @@
     wait_for:
       host: "{{ master_ip }}"
       port: 6443
-      delay: 15
-      timeout: 180
+      delay: 10
+      timeout: 300
       state: started
       msg: "Master Kubernetes PORT is not Listening"
     ignore_errors: true
 
-  - name: Wait 10 seconds to join
+  - name: Wait 30 seconds to join
     wait_for:
-      delay: 10
+      delay: 30
       timeout: 0
     
   - name: Copy the join command to server location

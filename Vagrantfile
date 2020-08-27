@@ -3,7 +3,6 @@
 # kubectl --kubeconfig=.kube/config get nodes
 
 N = 2
-NETWORK = '192.168.50' 
 
 PROVIDER = 'virtualbox'
 #PROVIDER = 'libvirt'
@@ -11,10 +10,13 @@ PROVIDER = 'virtualbox'
 
 if PROVIDER == 'virtualbox'
   VMACHINE_IMAGE = 'geerlingguy/ubuntu2004'
+  NETWORK = '192.168.40'
 elsif PROVIDER == 'libvirt'
   VMACHINE_IMAGE = 'abi/ubuntu2004'
+  NETWORK = '192.168.60'
 elsif PROVIDER == 'docker'
-  DOCKER_IMAGE = 'ubuntu:20.04'  
+  DOCKER_IMAGE = 'ubuntu:20.04'
+  NETWORK = '192.168.80'
 end
 
 Vagrant.configure("2") do |config|
