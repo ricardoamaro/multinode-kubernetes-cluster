@@ -20,11 +20,11 @@
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
 
+
   - name: Add apt repository for stable version
     apt_repository:
       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
       state: present
-
   - name: Install docker and its dependecies
     apt: 
       name: "{{ packages }}"
@@ -96,6 +96,21 @@
       daemon_reload: yes
       state: restarted
 
+  - name: Wait for Master Kubernetes PORT Open
+    wait_for:
+      host: "{{ master_ip }}"
+      port: 6443
+      delay: 15
+      timeout: 180
+      state: started
+      msg: "Master Kubernetes PORT is not Listening"
+    ignore_errors: true
+
+  - name: Wait 10 seconds to join
+    wait_for:
+      delay: 10
+      timeout: 0
+    
   - name: Copy the join command to server location
     copy:
       src: ../.join-command

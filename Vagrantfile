@@ -2,48 +2,63 @@
 # Can be controled from the repo folder:
 # kubectl --kubeconfig=.kube/config get nodes
 
-VMACHINE_IMAGE = "bento/ubuntu-20.04"
-DOCKER_IMAGE = "ubuntu:20.04"
 N = 2
+NETWORK = '192.168.50' 
 
-provider = "virtualbox"
-#provider = "libvirt"
-#provider = "docker"
+PROVIDER = 'virtualbox'
+#PROVIDER = 'libvirt'
+#PROVIDER = 'docker'
+
+if PROVIDER == 'virtualbox'
+  VMACHINE_IMAGE = 'geerlingguy/ubuntu2004'
+elsif PROVIDER == 'libvirt'
+  VMACHINE_IMAGE = 'abi/ubuntu2004'
+elsif PROVIDER == 'docker'
+  DOCKER_IMAGE = 'ubuntu:20.04'  
+end
 
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
+  config.vm.synced_folder './', '/vagrant', type: 'rsync' if PROVIDER == 'libvirt'
 
-  config.vm.provider "#{provider}" do |v|
-    #v.image = DOCKER_IMAGE
-    v.memory = 1024
-    v.cpus = 2
+  config.vm.provider PROVIDER do |v|
+    if PROVIDER == 'docker'
+      v.image = DOCKER_IMAGE
+    else
+      v.memory = 1024
+      v.cpus = 2
+    end
   end
   
   config.vm.define "k8s-master" do |master|
-    master.vm.box = VMACHINE_IMAGE
-    master.vm.network "private_network", ip: "192.168.50.10"
+    master.vm.box = VMACHINE_IMAGE if PROVIDER != "docker"
+    master.vm.network "private_network", ip: "#{NETWORK}.10"
     master.vm.hostname = "k8s-master"
     master.vm.provision "ansible" do |ansible|
       ansible.playbook = "kubernetes-setup/master-playbook.yml"
       ansible.extra_vars = {
-        node_ip: "192.168.50.10",
+        node_ip: "#{NETWORK}.10"
       }
       ansible.raw_arguments = [
-        "--forks=10"
+        '--forks=10'
       ]
     end
   end
 
   (1..N).each do |i|
     config.vm.define "node-#{i}" do |node|
-      node.vm.box = VMACHINE_IMAGE
-      node.vm.network "private_network", ip: "192.168.50.#{i + 10}"
+      node.vm.box = VMACHINE_IMAGE if PROVIDER != "docker"
+      node.vm.network "private_network", ip: "#{NETWORK}.#{i + 10}"
       node.vm.hostname = "node-#{i}"
       node.vm.provision "ansible" do |ansible|
         ansible.playbook = "kubernetes-setup/node-playbook.yml"
         ansible.extra_vars = {
-          node_ip: "192.168.50.#{i + 10}",
+          node_ip: "#{NETWORK}.#{i + 10}",
+          master_ip: "#{NETWORK}.10",
         }
+        ansible.raw_arguments = [
+          '--forks=10'
+        ]
       end
     end
   end

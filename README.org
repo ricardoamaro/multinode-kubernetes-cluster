@@ -43,6 +43,8 @@ Or if you have `kubectl` installed locally, try:
 *** On Ubuntu
 
 #+BEGIN_SRC
+# Install deb
+# https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.deb
 sudo apt-get install -y libvirt-dev make gcc ruby-dev qemu-kvm libvirt0 virt-manager libguestfs-tools
 
 vagrant plugin install vagrant-libvirt
@@ -52,15 +54,26 @@ vagrant plugin install vagrant-libvirt
 *** On Centos/Redhat/FEdora
 
 #+BEGIN_SRC
-yum install -y libvirt libvirt-devel make gcc rpm-build ruby-devel zlib-devel qemu-kvm
-
 # use the rpm from hashicorp
 yum install -y https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.rpm
+
+yum install -y libvirt libvirt-devel make gcc rpm-build ruby-devel zlib-devel qemu-kvm
 
 vagrant plugin install vagrant-libvirt
 #+END_SRC
 
+*** Default pool images
+
+Vagrant expects a storage pool named 'default'.
+In case you don't have it already, run the following:
+
+#+BEGIN_SRC
+mkdir -p /var/lib/libvirt/default
+virsh pool-define-as --name default --type dir --target /var/lib/libvirt/default
+virsh pool-autostart default
+virsh pool-start default
+#+END_SRC
 
 *** Running 
-Temporary uncomment the Vagrantfile `#provider = "libvirt"` line.
+Temporary uncomment the line `#provider = "libvirt"` in the Vagrantfile.
 Run `vagrant up` as normal.
