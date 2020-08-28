@@ -8,6 +8,7 @@ By using Ansible as the infrastructure automation engine we can have playbooks w
 - Vagrant: https://www.vagrantup.com/downloads.html
 - Ansible: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
 - VirtualBox as the provider. https://www.virtualbox.org/wiki/Downloads
+- kubectl installed locally, https://kubernetes.io/docs/tasks/tools/install-kubectl/
 
 Note that Docker and KVM/libvirt will be supported in the future.  
 

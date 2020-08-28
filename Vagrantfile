@@ -56,7 +56,7 @@ Vagrant.configure("2") do |config|
         ansible.playbook = "kubernetes-setup/node-playbook.yml"
         ansible.extra_vars = {
           node_ip: "#{NETWORK}.#{i + 10}",
-          master_ip: "#{NETWORK}.10",
+          master_ip: "#{NETWORK}.10"
         }
         ansible.raw_arguments = [
           '--forks=10'
@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
   config.trigger.after :up do |trigger|
     trigger.name = "Check kubernetes cluster"
     # trigger.info = "kubectl --kubeconfig=.kube/config get nodes"
-    trigger.run = {inline: "kubectl --kubeconfig=.kube/config get nodes"}
+    trigger.run = {inline: "sh -c 'kubectl --kubeconfig=.kube/config get nodes || true'"}
   end
 end
 
