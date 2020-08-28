@@ -67,8 +67,8 @@ Vagrant.configure("2") do |config|
   
   config.trigger.after :up do |trigger|
     trigger.name = "Check kubernetes cluster"
-    # trigger.info = "kubectl --kubeconfig=.kube/config get nodes"
-    trigger.run = {inline: "sh -c 'kubectl --kubeconfig=.kube/config get nodes || true'"}
+    trigger.run = {inline: 'kubectl --kubeconfig=.kube/config get nodes'}
+    trigger.on_error = :continue
   end
 end
 
