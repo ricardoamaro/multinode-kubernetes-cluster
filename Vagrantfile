@@ -4,9 +4,9 @@
 
 N = 2
 
-PROVIDER = 'virtualbox'
+#PROVIDER = 'virtualbox'
 #PROVIDER = 'libvirt'
-#PROVIDER = 'docker'
+PROVIDER = 'docker'
 
 if PROVIDER == 'virtualbox'
   VMACHINE_IMAGE = 'geerlingguy/ubuntu2004'
@@ -16,6 +16,7 @@ elsif PROVIDER == 'libvirt'
   NETWORK = '192.168.60'
 elsif PROVIDER == 'docker'
   DOCKER_IMAGE = 'ubuntu:20.04'
+  DOCKER_IMAGE = 'eg_sshd'
   NETWORK = '192.168.80'
 end
 
@@ -26,6 +27,12 @@ Vagrant.configure("2") do |config|
   config.vm.provider PROVIDER do |v|
     if PROVIDER == 'docker'
       v.image = DOCKER_IMAGE
+      #v.cmd = ["/usr/sbin/sshd", "-D"]
+      #v.cmd = ["tail", "-f", "/dev/null"]
+      #v.image = "archlinux:sshd"
+      #v.name = 'dockerizedvm'
+      v.has_ssh = true
+    #v.remains_running = false
     else
       v.memory = 1024
       v.cpus = 2
@@ -67,7 +74,7 @@ Vagrant.configure("2") do |config|
   
   config.trigger.after :up do |trigger|
     trigger.name = "Check kubernetes cluster"
-    trigger.run = {inline: 'kubectl --kubeconfig=.kube/config get nodes'}
+    #trigger.run = {inline: 'kubectl --kubeconfig=.kube/config get nodes'}
     trigger.on_error = :continue
   end
 end
