@@ -4,9 +4,9 @@
 
 N = 2
 
-#PROVIDER = 'virtualbox'
+PROVIDER = 'virtualbox'
 #PROVIDER = 'libvirt'
-PROVIDER = 'docker'
+#PROVIDER = 'docker'
 
 if PROVIDER == 'virtualbox'
   VMACHINE_IMAGE = 'geerlingguy/ubuntu2004'
@@ -15,8 +15,7 @@ elsif PROVIDER == 'libvirt'
   VMACHINE_IMAGE = 'abi/ubuntu2004'
   NETWORK = '192.168.60'
 elsif PROVIDER == 'docker'
-  DOCKER_IMAGE = 'ubuntu:20.04'
-  DOCKER_IMAGE = 'eg_sshd'
+  DOCKER_IMAGE = 'ricardoamaro/vagrant-kubernetes-node'
   NETWORK = '192.168.80'
 end
 
@@ -27,12 +26,8 @@ Vagrant.configure("2") do |config|
   config.vm.provider PROVIDER do |v|
     if PROVIDER == 'docker'
       v.image = DOCKER_IMAGE
-      #v.cmd = ["/usr/sbin/sshd", "-D"]
-      #v.cmd = ["tail", "-f", "/dev/null"]
-      #v.image = "archlinux:sshd"
-      #v.name = 'dockerizedvm'
+      v.create_args = ["-ti", "--privileged", "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro"]
       v.has_ssh = true
-    #v.remains_running = false
     else
       v.memory = 1024
       v.cpus = 2
