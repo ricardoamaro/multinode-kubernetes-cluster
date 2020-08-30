@@ -47,6 +47,7 @@ RUN echo "vagrant ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vagrant && \
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd; \
   echo 'PermitRootLogin yes ' >> /etc/ssh/sshd_config; \
   echo 'UseDNS no' >> /etc/ssh/sshd_config; \
+  rm -f /lib/systemd/system/systemd-tmpfiles-setup.service; \
   mkdir -p /var/run/sshd
 
 ENV NOTVISIBLE "in users profile"
@@ -54,4 +55,4 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 
 EXPOSE 22 80 443 2379 2380 6443 10250-10256 30000-32767
 VOLUME [ “/sys/fs/cgroup” ]
-CMD ["/usr/lib/systemd/systemd", "--system"]
+CMD ["/usr/lib/systemd/systemd", "--system", "--unit=multi-user.target"]

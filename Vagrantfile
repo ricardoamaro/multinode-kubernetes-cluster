@@ -4,9 +4,9 @@
 
 N = 2
 
-PROVIDER = 'virtualbox'
+#PROVIDER = 'virtualbox'
 #PROVIDER = 'libvirt'
-#PROVIDER = 'docker'
+PROVIDER = 'docker'
 
 if PROVIDER == 'virtualbox'
   VMACHINE_IMAGE = 'geerlingguy/ubuntu2004'
