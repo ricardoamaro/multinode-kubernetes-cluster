@@ -1,7 +1,14 @@
+#+STARTUP: inlineimages
+
 * Multi node Kubernetes Cluster
 
-This a multi node cluster playground which offers a production-like environment using Vagrant and Ansible for provisioning the cluster on multiple providers such as VirtualBox and KVM/libvirt.
+This a multi node cluster playground which offers a production-like environment using kubeadm, Vagrant and Ansible for provisioning the cluster on multiple providers such as VirtualBox and KVM/libvirt.
 By using Ansible as the infrastructure automation engine we can have playbooks written in yaml that offer inventory management the infrastructure-as-code way.
+
+#+CAPTION: Multi-node kubernetes cluster diagram
+#+NAME:   fig:Diagram-1
+#+ATTR_ORG: :width 400
+[[file:./kubernetes-setup/Diagram.png]]
 
 * Requirements
 
@@ -10,7 +17,7 @@ By using Ansible as the infrastructure automation engine we can have playbooks w
 - VirtualBox as the provider. https://www.virtualbox.org/wiki/Downloads
 - kubectl installed locally, https://kubernetes.io/docs/tasks/tools/install-kubectl/
 
-Note that Docker might be supported in the future.
+Note that Docker might be supported in the future, depending on having a fully working image that can fit with the Ansible playbooks.
 
 * Quick reference
 
