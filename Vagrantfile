@@ -2,14 +2,22 @@
 # Can be controled from the repo folder:
 # kubectl --kubeconfig=.kube/config get nodes
 
-N = 2
-
-#PROVIDER = 'virtualbox'
-#PROVIDER = 'libvirt'
-PROVIDER = 'docker'
+if(File.exist?('config.yaml'))
+  puts 'Reading configs from config.yaml'
+  config = YAML.load_file('config.yaml')['config']
+  NODES = config['nodes']
+  MEMORY = config['memory']
+  PROVIDER = config['provider']
+else
+  NODES = 2
+  MEMORY = 1024
+  PROVIDER = 'virtualbox'
+  #PROVIDER = 'libvirt'
+  #PROVIDER = 'docker' # not yet supported
+end
 
 if PROVIDER == 'virtualbox'
-  VMACHINE_IMAGE = 'geerlingguy/ubuntu2004'
+  VMACHINE_IMAGE = 'bento/ubuntu-20.04'
   NETWORK = '192.168.40'
 elsif PROVIDER == 'libvirt'
   VMACHINE_IMAGE = 'abi/ubuntu2004'
@@ -26,10 +34,16 @@ Vagrant.configure("2") do |config|
   config.vm.provider PROVIDER do |v|
     if PROVIDER == 'docker'
       v.image = DOCKER_IMAGE
-      v.create_args = ["-ti", "--privileged", "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro"]
-      v.has_ssh = true
+      v.privileged = true # Required for "docker in docker"
+      #v.cmd = [ "/usr/sbin/sshd", "-D" ]
+      v.create_args = ["-ti", "--privileged",
+                       "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro",
+                       "-v", "/usr/src:/usr/src:ro",
+                       "-v", "/var/run/docker.sock:/var/run/docker.sock:rw",
+                       "-v", "/lib/modules:/lib/modules:ro"]
+      v.has_ssh = true # Required for "docker in docker"
     else
-      v.memory = 1024
+      v.memory = MEMORY
       v.cpus = 2
     end
   end
@@ -49,7 +63,7 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  (1..N).each do |i|
+  (1..NODES).each do |i|
     config.vm.define "node-#{i}" do |node|
       node.vm.box = VMACHINE_IMAGE if PROVIDER != "docker"
       node.vm.network "private_network", ip: "#{NETWORK}.#{i + 10}"

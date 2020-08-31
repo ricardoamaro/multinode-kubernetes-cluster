@@ -1,6 +1,6 @@
 * Multi node Kubernetes Cluster
 
-This a multi node cluster playground which offers a production-like environment using Vagrant and Ansible for provisioning the cluster on multiple providers such as VirtualBox, Docker, KVM/libvirt and so on.
+This a multi node cluster playground which offers a production-like environment using Vagrant and Ansible for provisioning the cluster on multiple providers such as VirtualBox and KVM/libvirt.
 By using Ansible as the infrastructure automation engine we can have playbooks written in yaml that offer inventory management the infrastructure-as-code way.
 
 * Requirements
@@ -10,9 +10,15 @@ By using Ansible as the infrastructure automation engine we can have playbooks w
 - VirtualBox as the provider. https://www.virtualbox.org/wiki/Downloads
 - kubectl installed locally, https://kubernetes.io/docs/tasks/tools/install-kubectl/
 
-Note that Docker and KVM/libvirt will be supported in the future.  
+Note that Docker might be supported in the future.
 
 * Quick reference
+
+** Using config.yaml external file
+
+It is advisable to copy the file `config.sample` to `config.yaml` in order to set configuration.
+
+** Running kubectl
 
 After pulling this repository run `vagrant up` on the base folder.
 When the cluster is up and running you can ssh and
@@ -67,7 +73,6 @@ vagrant plugin install vagrant-libvirt
 
 Vagrant expects a storage pool named 'default'.
 In case you don't have it already, run the following:
-
 #+BEGIN_SRC
 mkdir -p /var/lib/libvirt/default
 virsh pool-define-as --name default --type dir --target /var/lib/libvirt/default

@@ -1,0 +1,6 @@
+---
+config:
+  nodes: 2
+  memory: 1024
+  provider: virtualbox
+

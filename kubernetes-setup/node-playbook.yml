@@ -101,7 +101,7 @@
       host: "{{ master_ip }}"
       port: 6443
       delay: 10
-      timeout: 300
+      timeout: 600
       state: started
       msg: "Master Kubernetes PORT is not Listening"
     ignore_errors: true

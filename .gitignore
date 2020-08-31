@@ -1,3 +1,4 @@
 .kube/
 .vagrant/
 .join-command
+config.yaml
